@@ -20,6 +20,7 @@ pygame.init()
 anchura=800 ##Dimensiones de la pantalla
 altura=700
 screen = pygame.display.set_mode((anchura, altura)) ##El programá hará una pantalla del tamaño adecuado
+pygame.display.set_caption("")
 #screen.fill((25, 25, 25)) 
 dimCW = anchura / filas    ##Las dimensiones de la pantalla se reparten entre todas las células
 dimCH = altura / columnas

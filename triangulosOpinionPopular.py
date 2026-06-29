@@ -100,7 +100,7 @@ if __name__ == "__main__":
     pygame.init()
 
     pantalla = pygame.display.set_mode((500, 500))
-    pygame.display.set_caption("Cuadrícula de Triángulos Equiláteros")
+    pygame.display.set_caption("")
 
     # Colores
     COLOR_FONDO = (240, 240, 240)

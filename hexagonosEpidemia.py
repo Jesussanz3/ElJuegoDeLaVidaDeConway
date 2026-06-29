@@ -53,7 +53,7 @@ if __name__ == "__main__":
     ANCHO_PANTALLA = 800
     ALTO_PANTALLA = 750
     pantalla = pygame.display.set_mode((ANCHO_PANTALLA, ALTO_PANTALLA))
-    pygame.display.set_caption("Mi Cuadrícula Hexagonal")
+    pygame.display.set_caption("")
 
     # 3. Definir Colores (RGB)
     COLOR_FONDO = (240, 240, 240)  # Gris muy claro
