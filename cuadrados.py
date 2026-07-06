@@ -4,9 +4,9 @@ import pygame ##Para usar la pantalla en la que se verá el juego de la vida en 
 ##pip install pygame   ##Para instalarlo: pip install pygame --trusted-host pypi.org --trusted-host files.pythonhosted.org --trusted-host pypi.python.org
 
 ##"filas" y "columnas" tienen que ser enteros mayores que 0
-filas=50
-columnas=50
-juego=np.zeros((columnas, filas)) ##Aquí decidimos el tamaño del plano
+filas=10
+columnas=10
+juego=np.zeros((filas, columnas)) ##Aquí decidimos el tamaño del plano
 
 ##Aquí decidimos qué células empiezan vivas. Valor 0: la célula está muerta. Valor 1: la célula está viva. 
 
@@ -17,8 +17,8 @@ altura=700
 screen = pygame.display.set_mode((anchura, altura)) ##El programá hará una pantalla del tamaño adecuado
 pygame.display.set_caption("")
 #screen.fill((25, 25, 25)) 
-dimCW = anchura / filas    ##Las dimensiones de la pantalla se reparten entre todas las células
-dimCH = altura / columnas
+dimCW = anchura / columnas    ##Las dimensiones de la pantalla se reparten entre todas las células
+dimCH = altura / filas
 
 #c=0 ##Este número será el contador de las iteraciones
 #print("Iteración ", c,": ") ##Esto imprimiría en la terminar los valores de las células (0: muerta. 1: viva)
@@ -36,7 +36,7 @@ while True:
                 pausa = not pausa 
         if ev.type==pygame.MOUSEBUTTONDOWN: ##Este código es para cambiar el estado de la célula que estés seleccionando (de vivo a muerto, y viceversa)
             posX, posY = pygame.mouse.get_pos() ##Estas variables guardan la posición del cursor cuando pulsamos el ratón
-            celX, celY = int(np.floor(posX / dimCW)), int(np.floor(posY / dimCH)) ##Con las dimensiones de la pantalla y la cantidad de células, calculamos en qué célula hemos pulsado.
+            celY, celX = int(np.floor(posX / dimCW)), int(np.floor(posY / dimCH)) ##Con las dimensiones de la pantalla y la cantidad de células, calculamos en qué célula hemos pulsado.
             juegocopia[celX, celY] = not juegocopia[celX, celY] ##Cuando pulsemos en una célula, cambiaremos su estado (de viva a muerta y viceversa)
     #c=c+1
     for i in range(0, filas):
@@ -49,10 +49,13 @@ while True:
                 else: ##Si la célula estaba viva
                     if vecinosvivos<2 or vecinosvivos>3:
                         juegocopia[i, j]=0 #Si una célula viva tiene menos de 2 o más de 3 células vecinas vivas, muere por soledad o por sobrepoblación
-            poly=[((i) * dimCW+2, j * dimCH+2), ##Aquí se calculan los límites del cuadrado de la célula con la que estamos tratando. Esquina superior izquierda
-                ((i+1) * dimCW-2, j * dimCH+2), #Esquina inferior izquierda
-                ((i+1) * dimCW-2, (j+1) * dimCH-2), #Esquina superior derecha
-                ((i) * dimCW+2, (j+1) * dimCH-2)]  #Esquina inferior derecha
+            poly=[((j) * dimCW+2, i * dimCH+2), ##Aquí se calculan los límites del cuadrado de la célula con la que estamos tratando. Esquina superior izquierda
+                ((j+1) * dimCW-2, i * dimCH+2), #Esquina inferior izquierda
+                ((j+1) * dimCW-2, (i+1) * dimCH-2), #Esquina superior derecha
+                ((j) * dimCW+2, (i+1) * dimCH-2)]  #Esquina inferior derecha
+            #print("i: ", i,". j: ", j)
+            #print("poly: ")
+            #print(poly)
             if juegocopia[i, j] == 0:
                 pygame.draw.polygon(screen, (128, 128, 128), poly, 1) ##Si la célula está muerta, los bordes del cuadrado de esa célula se mantendrán de color gris oscuro (el cuadrado de la célula se pinta de blanco)
             else:
