@@ -1,0 +1,248 @@
+import math
+import pygame
+import sys
+import numpy as np
+import time
+import random
+
+def obtener_esquinas_hexagono(cx, cy, tamaño, orientacion='puntiagudo'):
+    """Calcula las 6 coordenadas (x, y) de las esquinas de un hexágono."""
+    esquinas = []
+    for i in range(6):
+        if orientacion == 'puntiagudo':
+            angulo_deg = 60 * i - 30
+        else: # plano
+            angulo_deg = 60 * i
+            
+        angulo_rad = math.radians(angulo_deg)
+        x = cx + tamaño * math.cos(angulo_rad)
+        y = cy + tamaño * math.sin(angulo_rad)
+        esquinas.append((x, y))
+        
+    return esquinas
+
+def generar_cuadricula_hexagonal(filas, columnas, tamaño):
+    """Genera los centros y las esquinas para una matriz de hexágonos (odd-r)."""
+    ancho = math.sqrt(3) * tamaño
+    altura = 2 * tamaño
+    distancia_x = ancho
+    distancia_y = 3/4 * altura
+    matriz = []
+    
+    for fila in range(filas):
+        for col in range(columnas):
+            offset_x = (ancho / 2) if fila % 2 != 0 else 0
+            cx = col * distancia_x + offset_x
+            cy = fila * distancia_y
+            esquinas = obtener_esquinas_hexagono(cx, cy, tamaño)
+            
+            matriz.append({
+                'fila': fila,
+                'columna': col,
+                'centro': (cx, cy),
+                'esquinas': esquinas
+            })
+            
+    return matriz
+
+# --- LÓGICA DE PYGAME ---
+if __name__ == "__main__":
+    # 1. Inicializar Pygame
+    pygame.init()
+
+    # 2. Configurar la ventana
+    ANCHO_PANTALLA = 800
+    ALTO_PANTALLA = 750
+    pantalla = pygame.display.set_mode((ANCHO_PANTALLA, ALTO_PANTALLA))
+    pygame.display.set_caption("")
+
+    # 3. Definir Colores (RGB)
+    COLOR_FONDO = (240, 240, 240)  # Gris muy claro
+    COLOR_BORDE = (50, 50, 50)     # Gris oscuro
+    COLOR_RELLENO = (0, 255, 0) # Verde azulado
+
+    # 4. Parámetros de la cuadrícula
+    RADIO = 20
+    FILAS = 20
+    COLUMNAS = 20
+    
+    # Desplazamiento inicial para que la cuadrícula no se corte en el borde superior izquierdo
+    OFFSET_X = 60
+    OFFSET_Y = 60
+
+    # Generamos la información matemática
+    mi_cuadricula = generar_cuadricula_hexagonal(FILAS, COLUMNAS, RADIO)
+    #for i in mi_cuadricula:
+    #    print("Fila de hexágono: ",i['fila'] , ". Columna de hexágono: ", i['columna'],". Centro de hexágono: ", (i['centro'][0]+OFFSET_X, i['centro'][1]+OFFSET_Y))
+    juego=np.zeros((FILAS, COLUMNAS))
+    dia=0
+    #juego[0, 1]=1.0
+    #juego[2, 1]=1.0
+    #juego[1, 0]=1.0
+
+    # 5. Bucle principal de la aplicación
+    corriendo = True
+    for i in range (0, FILAS):
+        for j in range (0, COLUMNAS):
+            prob=random.random()
+            #print("prob: ", prob)
+            if prob<0.25:
+                prob2=random.random()
+                if prob2<0.5:
+                    juego[i,j]=1
+                else:
+                    juego[i,j]=2
+            #print("juego[",i,", ",j,"]: ",juego[i,j])
+    juegocopia=np.zeros((FILAS, COLUMNAS))
+    for i in range(0, FILAS):
+        for j in range(0, COLUMNAS):
+            juegocopia[i, j]=juego[i, j]
+    pausa=True
+    pantalla.fill(COLOR_FONDO)
+    # Dibujar cada hexágono de la cuadrícula
+    for hex_data in mi_cuadricula:
+        # Extraemos las esquinas y aplicamos el desplazamiento (offset)
+        esquinas_originales = hex_data['esquinas']
+        esquinas_desplazadas = [(x + OFFSET_X, y + OFFSET_Y) for x, y in esquinas_originales]
+        
+        f=hex_data['fila']
+        c=hex_data['columna']
+        if juegocopia[f, c]==1: 
+            pygame.draw.polygon(pantalla, (0, 128, 0), esquinas_desplazadas)
+        else:
+            if juegocopia[f, c]==0: 
+                pygame.draw.polygon(pantalla, (255, 255, 255), esquinas_desplazadas)
+            else:
+                pygame.draw.polygon(pantalla, (0, 255, 0), esquinas_desplazadas)
+        # Dibujar el borde del hexágono (el grosor '2' al final indica que es solo el borde)
+        pygame.draw.polygon(pantalla, COLOR_BORDE, esquinas_desplazadas, 2)
+
+    # Actualizar la pantalla
+    pygame.display.flip()
+    while corriendo:
+        # Control de eventos (como cerrar la ventana)
+        for evento in pygame.event.get():
+            if evento.type==pygame.KEYDOWN:
+                if evento.key==pygame.K_SPACE: ##Podemos hacer que el juego pause o continue cuando se pulse una tecla concreta.
+                    pausa = not pausa
+            if evento.type==pygame.MOUSEBUTTONDOWN: ##Este código es para cambiar el estado de la célula que estés seleccionando (de vivo a muerto, y viceversa)
+                posX, posY = pygame.mouse.get_pos() ##Estas variables guardan la posición del cursor cuando pulsamos el ratón
+                #print("posX: ",posX,". posY: ",posY)
+                """
+                Calcula qué hexágono está más cerca de la posición del ratón.
+                """
+                hexagono_seleccionado = None
+                distancia_minima = float('inf')
+
+                for hex_data in mi_cuadricula:
+                    # IMPORTANTE: Los centros matemáticos no tienen el offset de la pantalla.
+                    # Tenemos que sumar el offset para que coincida con lo que vemos en Pygame.
+                    cx_pantalla = hex_data['centro'][0] + OFFSET_X
+                    cy_pantalla = hex_data['centro'][1] + OFFSET_Y
+
+                    # Calculamos la distancia euclidiana entre el ratón y el centro del hexágono
+                    distancia = math.hypot(posX - cx_pantalla, posY - cy_pantalla)
+
+                    # Si la distancia es menor que el radio (aproximadamente) y es la más corta encontrada
+                    if distancia < distancia_minima and distancia < (RADIO * 0.9): 
+                        distancia_minima = distancia
+                        hexagono_seleccionado = hex_data
+                if hexagono_seleccionado:
+                    f=hexagono_seleccionado['fila']
+                    c=hexagono_seleccionado['columna']
+                    esquinas_originales = hexagono_seleccionado['esquinas']
+                    esquinas_desplazadas = [(x + OFFSET_X, y + OFFSET_Y) for x, y in esquinas_originales]
+                    if juegocopia[f, c]==1:
+                        juego[f, c]=0
+                        juegocopia[f, c]=0
+                        pygame.draw.polygon(pantalla, (255, 255, 255), esquinas_desplazadas)
+                    else:
+                        if juegocopia[f, c]==0:
+                            juego[f, c]=2
+                            juegocopia[f, c]=2
+                            pygame.draw.polygon(pantalla, (0, 255, 0), esquinas_desplazadas)
+                        else:
+                            juego[f, c]=1
+                            juegocopia[f, c]=1
+                            pygame.draw.polygon(pantalla, (0, 128, 0), esquinas_desplazadas)
+                    pygame.draw.polygon(pantalla, COLOR_BORDE, esquinas_desplazadas, 2)
+                    pygame.display.flip()
+            if evento.type == pygame.QUIT:
+                corriendo = False
+        if not pausa:
+            celdasvivasjovenes=0
+            celdasvivasmaduras=0
+            actividad=0
+            for i in range(0, FILAS):
+                for j in range(0, COLUMNAS):
+                    vecinosvivos=0
+                    if juego[(i-1)%FILAS, j]>0:
+                        vecinosvivos=vecinosvivos+1
+                    if juego[i, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                    if juego[i, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                    if juego[(i+1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                    if i%2==0:
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]>0:
+                                vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]>0:
+                                vecinosvivos=vecinosvivos+1
+                    else:
+                        
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]>0:
+                                vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]>0:
+                                vecinosvivos=vecinosvivos+1
+                    if juegocopia[i, j]==0:
+                        if vecinosvivos==2:
+                            juegocopia[i, j]=1
+                            celdasvivasjovenes=celdasvivasjovenes+1
+                            actividad=actividad+1
+                    else:
+                        if vecinosvivos==2 or vecinosvivos==3:
+                            juegocopia[i, j]=2
+                            celdasvivasmaduras=celdasvivasmaduras+1
+                            if juego[i,j]==1:
+                                actividad=actividad+1
+                        else:
+                            juegocopia[i, j]=0
+                            actividad=actividad+1
+            # Rellenar el fondo
+            pantalla.fill(COLOR_FONDO)
+            # Dibujar cada hexágono de la cuadrícula
+            for hex_data in mi_cuadricula:
+                # Extraemos las esquinas y aplicamos el desplazamiento (offset)
+                esquinas_originales = hex_data['esquinas']
+                esquinas_desplazadas = [(x + OFFSET_X, y + OFFSET_Y) for x, y in esquinas_originales]
+                
+                f=hex_data['fila']
+                c=hex_data['columna']
+                if juegocopia[f, c]==1: 
+                    pygame.draw.polygon(pantalla, (0, 128, 0), esquinas_desplazadas)
+                else:
+                    if juegocopia[f, c]==0: 
+                        pygame.draw.polygon(pantalla, (255, 255, 255), esquinas_desplazadas)
+                    else:
+                        pygame.draw.polygon(pantalla, (0, 255, 0), esquinas_desplazadas)
+                # Dibujar el borde del hexágono (el grosor '2' al final indica que es solo el borde)
+                pygame.draw.polygon(pantalla, COLOR_BORDE, esquinas_desplazadas, 2)
+
+            # Actualizar la pantalla
+            pygame.display.flip()
+            #for ev in pygame.event.get():
+            for i in range(0, FILAS):
+                for j in range(0, COLUMNAS):
+                    juego[i, j]=juegocopia[i, j]
+            dia=dia+1
+            celdasmuertas=(FILAS*COLUMNAS)-celdasvivasjovenes-celdasvivasmaduras
+            print("Iteración ", dia,". Celdas vivas: ", (celdasvivasjovenes+celdasvivasmaduras)/(FILAS*COLUMNAS),". Celdas vivas jóvenes: ",celdasvivasjovenes/(FILAS*COLUMNAS),". Celdas vivas maduras: ",celdasvivasmaduras/(FILAS*COLUMNAS),". Celdas muertas: ",celdasmuertas/(FILAS*COLUMNAS),". Actividad: ", actividad/(FILAS*COLUMNAS))
+            entropia=0-(celdasvivasjovenes/(FILAS*COLUMNAS))*np.log(celdasvivasjovenes/(FILAS*COLUMNAS))-(celdasvivasmaduras/(FILAS*COLUMNAS))*np.log(celdasvivasmaduras/(FILAS*COLUMNAS))-(celdasmuertas/(FILAS*COLUMNAS))*np.log(celdasmuertas/(FILAS*COLUMNAS))
+            entropia=entropia/np.log(3)
+            print("Entropía: ", entropia)            
+            time.sleep(0.1)
+
+    # Salir de forma limpia
+    pygame.quit()
+    sys.exit()
