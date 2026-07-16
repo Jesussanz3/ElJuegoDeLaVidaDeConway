@@ -137,12 +137,12 @@ if __name__ == "__main__":
         f=tri_data['fila']
         c=tri_data['columna']
         if juegocopia[f, c]==1:
-            pygame.draw.polygon(pantalla, COLOR_RELLENO, esquinas_desplazadas)
+            pygame.draw.polygon(pantalla, (255,0,0), esquinas_desplazadas)
         else:
             if juegocopia[f, c]==0:
                 pygame.draw.polygon(pantalla, (255, 255, 255), esquinas_desplazadas)
             else:
-                pygame.draw.polygon(pantalla, (255, 0, 0), esquinas_desplazadas)
+                pygame.draw.polygon(pantalla, (0, 255, 0), esquinas_desplazadas)
         pygame.draw.polygon(pantalla, COLOR_BORDE, esquinas_desplazadas, 2)
     pygame.display.flip()
     corriendo = True
@@ -161,14 +161,14 @@ if __name__ == "__main__":
                         esquinas=tri_activo['esquinas']
                         esquinas_desplazadas = [(x + OFFSET_X, y + OFFSET_Y) for x, y in esquinas]
                         if juegocopia[f, c]==0:
-                            juego[f, c]=5
-                            juegocopia[f, c]=5
+                            juego[f, c]=1
+                            juegocopia[f, c]=1
                             pygame.draw.polygon(pantalla, (255,0,0), esquinas_desplazadas)
                         else:
-                            if juegocopia[f, c]>1:
-                                juego[f, c]=1
-                                juegocopia[f, c]=1
-                                pygame.draw.polygon(pantalla, COLOR_RELLENO, esquinas_desplazadas)
+                            if juegocopia[f, c]==1:
+                                juego[f, c]=2
+                                juegocopia[f, c]=2
+                                pygame.draw.polygon(pantalla, (0,255,0), esquinas_desplazadas)
                             else:
                                 juego[f, c]=0
                                 juegocopia[f, c]=0
@@ -182,25 +182,35 @@ if __name__ == "__main__":
         if not pausa:
             for i in range(0, FILAS):
                 for j in range(0, COLUMNAS):
-                    if juego[i, j]==0:
-                        vecinosenfermos=0
-                        if juego[i, (j-1)%COLUMNAS]>1:
+                    vecinosenfermos=0
+                    if juego[i, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                    if juego[i, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                    
+                    if (i+j)%2==0:
+                        if juego[(i+1)%FILAS, j]==1:
                                 vecinosenfermos=vecinosenfermos+1
-                        if juego[i, (j+1)%COLUMNAS]>1:
-                                vecinosenfermos=vecinosenfermos+1
-                        
-                        if (i+j)%2==0:
-                            if juego[(i+1)%FILAS, j] >1:
-                                    vecinosenfermos=vecinosenfermos+1
-                        else:
-                            if juego[(i-1)%FILAS, j] >1:
-                                    vecinosenfermos=vecinosenfermos+1 
-                        if vecinosenfermos>0:
-                            juegocopia[i, j]=5
                     else:
-                        if juego[i,j]>1:
-                            juegocopia[i,j]=juego[i,j]-1
-                       
+                        if juego[(i-1)%FILAS, j]==1:
+                                vecinosenfermos=vecinosenfermos+1 
+                    if juego[i,j]==0:
+                        if vecinosenfermos>=2:
+                            juegocopia[i,j]=1
+                        else:
+                            juegocopia[i,j]=0
+                    else:
+                        if juego[i,j]==1:
+                            if vecinosenfermos<2:
+                                juegocopia[i,j]=2
+                            else:
+                                juegocopia[i,j]=1
+                        else:
+                            if vecinosenfermos==0:
+                                juegocopia[i,j]=0
+                            else:
+                                juegocopia[i,j]=2
+                    
                         
             # Renderizado
             pantalla.fill(COLOR_FONDO)
@@ -212,12 +222,12 @@ if __name__ == "__main__":
                 f=tri_data['fila']
                 c=tri_data['columna']
                 if juegocopia[f, c]==1:
-                    color_actual = COLOR_RELLENO
+                    color_actual = (255,0,0)
                 else:
                     if juegocopia[f, c]==0:
                         color_actual = (255, 255, 255)
                     else:
-                        color_actual = (255, 0, 0)
+                        color_actual = (0, 255, 0)
 
                 # Dibujar Triángulo
                 pygame.draw.polygon(pantalla, color_actual, esquinas_desplazadas)
@@ -228,12 +238,6 @@ if __name__ == "__main__":
             for i in range(0, FILAS):
                 for j in range(0, COLUMNAS):
                     juego[i, j]=juegocopia[i, j]
-            totalenfermos=0
-            for i in range (0, FILAS):
-                for j in range (0, COLUMNAS):
-                    if juego[i, j]>1:
-                        totalenfermos=totalenfermos+1
-            print("Día ",dia,". Enfermos: ", totalenfermos," / ", FILAS*COLUMNAS, ": ", totalenfermos/(FILAS*COLUMNAS)*100, "%.")
             dia=dia+1
             time.sleep(1)
 

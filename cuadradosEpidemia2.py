@@ -45,7 +45,7 @@ for celX in range(0, filas):
         ((celX+1) * dimCW-2, celY * dimCH+2), #Esquina inferior izquierda
         ((celX+1) * dimCW-2, (celY+1) * dimCH-2), #Esquina superior derecha
         ((celX) * dimCW+2, (celY+1) * dimCH-2)]  #Esquina inferior derecha
-        if juegocopia[celX, celY]==1:
+        if juegocopia[celX, celY]==2:
             pygame.draw.polygon(screen, (0, 255, 0), poly, 0)
         else:
             if juegocopia[celX, celY]==0:
@@ -67,18 +67,18 @@ while corriendo:
             ((celX+1) * dimCW-2, celY * dimCH+2), #Esquina inferior izquierda
             ((celX+1) * dimCW-2, (celY+1) * dimCH-2), #Esquina superior derecha
             ((celX) * dimCW+2, (celY+1) * dimCH-2)]  #Esquina inferior derecha
-            if juegocopia[celX, celY]==1:
-                juego[celX, celY]=0
-                juegocopia[celX, celY]=0
-                pygame.draw.polygon(screen, (255, 255, 255), poly, 0)
+            if juegocopia[celX, celY]==2:
+                juego[celX, celY]=1
+                juegocopia[celX, celY]=1
+                pygame.draw.polygon(screen, (255, 0, 0), poly, 0)
             else:
-                if juegocopia[celX, celY]==0:
-                    juego[celX, celY]=5
-                    juegocopia[celX, celY]=5
-                    pygame.draw.polygon(screen, (255, 0, 0), poly, 0)
+                if juegocopia[celX, celY]==1:
+                    juego[celX, celY]=0
+                    juegocopia[celX, celY]=0
+                    pygame.draw.polygon(screen, (255, 255, 255), poly, 0)
                 else:
-                    juego[celX, celY]=1
-                    juegocopia[celX, celY]=1
+                    juego[celX, celY]=2
+                    juegocopia[celX, celY]=2
                     pygame.draw.polygon(screen, (0, 255, 0), poly, 0)
             pygame.display.flip()
         if ev.type==pygame.QUIT: ##Esto da un pequeño error al cerrar, pero no creo que sea relevante
@@ -88,36 +88,51 @@ while corriendo:
         screen.fill((25, 25, 25))
         for i in range(0, filas):
             for j in range(0, columnas):
-                if juego[i, j]==0:
-                    vecinosenfermos=False
-                    for k in range (-1, 2):
-                        for l in range (-1, 2):
-                            if not (k==0 and l==0):
-                                if juego[(i+k)%filas, (j+l)%columnas]>1:
-                                    vecinosenfermos=True
-                    if vecinosenfermos==True:
-                        juegocopia[i, j]=5
+                vecinosenfermos=0
+                if juego[(i-1)%filas, (j-1)%columnas]==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[(i-1)%filas, j]==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[(i-1)%filas, (j+1)%columnas]==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[i, (j-1)%columnas] ==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[i, (j+1)%columnas] ==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[(i+1)%filas, (j-1)%columnas]==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[(i+1)%filas, j] ==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[(i+1)%filas, (j+1)%columnas] ==1:
+                    vecinosenfermos=vecinosenfermos+1
+                if juego[i,j]==0:
+                    if vecinosenfermos>=2:
+                        juegocopia[i,j]=1
+                    else:
+                        juegocopia[i,j]=0
                 else:
-                    if juego[i,j]>1:
-                        juegocopia[i,j]=juego[i,j]-1
+                    if juego[i,j]==1:
+                        if vecinosenfermos<2:
+                            juegocopia[i,j]=2
+                        else:
+                            juegocopia[i,j]=1
+                    else:
+                        if vecinosenfermos==0:
+                            juegocopia[i,j]=0
+                        else:
+                            juegocopia[i,j]=2
                 poly=[((i) * dimCW+2, j * dimCH+2), ##Aquí se calculan los límites del cuadrado de la célula con la que estamos tratando. Esquina superior izquierda
                     ((i+1) * dimCW-2, j * dimCH+2), #Esquina inferior izquierda
                     ((i+1) * dimCW-2, (j+1) * dimCH-2), #Esquina superior derecha
                     ((i) * dimCW+2, (j+1) * dimCH-2)]  #Esquina inferior derecha
                 if juegocopia[i, j] == 1:
-                    pygame.draw.polygon(screen, (0, 255, 0), poly, 0) ##Si la célula está muerta, los bordes del cuadrado de esa célula se mantendrán de color gris oscuro (el cuadrado de la célula se pinta de blanco)
+                    pygame.draw.polygon(screen, (255, 0, 0), poly, 0) ##Si la célula está muerta, los bordes del cuadrado de esa célula se mantendrán de color gris oscuro (el cuadrado de la célula se pinta de blanco)
                 else:
                     if juegocopia[i, j] == 0:
                         pygame.draw.polygon(screen, (255, 255, 255), poly, 0)
                     else:
-                        pygame.draw.polygon(screen, (255, 0, 0), poly, 0) ##Si la célula está viva, el cuadrado de la célula se pinta de blanco
+                        pygame.draw.polygon(screen, (0, 255, 0), poly, 0) ##Si la célula está viva, el cuadrado de la célula se pinta de blanco
         juego=juegocopia.copy() ##Actualizamos los datos del juego de la vida
-        totalenfermos=0
-        for i in range (0, filas):
-            for j in range (0, columnas):
-                if juego[i, j]>1:
-                    totalenfermos=totalenfermos+1
-        print("Día ",dia,". Enfermos: ", totalenfermos," / ", filas*columnas, ": ", totalenfermos/(filas*columnas)*100, "%.")
         dia=dia+1
         #print("Iteración ", c,": ") ##Esto imprimiría en la terminar los valores de las células (0: muerta. 1: viva)
         #print(juego)
