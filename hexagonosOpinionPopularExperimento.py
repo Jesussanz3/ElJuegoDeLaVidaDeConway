@@ -175,7 +175,7 @@ if __name__ == "__main__":
                     else:
                         vecinosvivos=juego[(i-1)%FILAS, j] + juego[(i-1)%FILAS, (j+1)%COLUMNAS] +  juego[i, (j-1)%COLUMNAS] + juego[i, (j+1)%COLUMNAS] + juego[(i+1)%FILAS, j] + juego[(i+1)%FILAS, (j+1)%COLUMNAS]
                     if juego[i,j]==0:
-                            if vecinosvivos==3:
+                            if vecinosvivos==2:
                                 juegocopia[i, j]=1
                                 celdasvivas=celdasvivas+1
                                 actividad=actividad+1
