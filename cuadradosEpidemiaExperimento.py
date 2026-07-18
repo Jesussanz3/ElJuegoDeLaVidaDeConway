@@ -36,17 +36,26 @@ dimCH = altura / columnas
 #print("Iteración ", c,": ") ##Esto imprimiría en la terminar los valores de las células (0: muerta. 1: viva)
 #print(juego)
 
+celdasvivasjovenes=0
+celdasvivasmaduras=0
 for i in range (0, filas):
     for j in range (0, columnas):
         prob=random.random()
         #print("prob: ", prob)
-        if prob<0.25:
+        if prob<0.75:
             prob2=random.random()
             if prob2<0.5:
                 juego[i,j]=1
+                celdasvivasjovenes=celdasvivasjovenes+1
             else:
                 juego[i,j]=2
+                celdasvivasmaduras=celdasvivasmaduras+1
         #print("juego[",i,", ",j,"]: ",juego[i,j])
+celdasmuertas=filas*columnas-celdasvivasjovenes-celdasvivasmaduras
+print("Iteración 0. Celdas vivas: ", (celdasvivasjovenes+celdasvivasmaduras)/(filas*columnas),". Celdas vivas jóvenes: ",celdasvivasjovenes/(filas*columnas),". Celdas vivas maduras: ",celdasvivasmaduras/(filas*columnas),". Celdas muertas: ",celdasmuertas/(filas*columnas))
+entropia=0-(celdasvivasjovenes/(filas*columnas))*np.log(celdasvivasjovenes/(filas*columnas))-(celdasvivasmaduras/(filas*columnas))*np.log(celdasvivasmaduras/(filas*columnas))-(celdasmuertas/(filas*columnas))*np.log(celdasmuertas/(filas*columnas))
+entropia=entropia/np.log(3)
+print("Entropía: ", entropia)
 juegocopia=juego.copy()
 screen.fill((25, 25, 25)) ##El color por defecto es gris muy oscuro ##Las células tendran un color gris muy oscuro al estar muertas
 dia=0
@@ -142,5 +151,8 @@ while corriendo:
         entropia=entropia/np.log(3)
         print("Entropía: ", entropia)
         pygame.display.flip() ##Se dibujan los cuadrados de la última iteración
-        time.sleep(0.1) ##Esperamos un tiempo hasta la siguiente iteración. El juego no termina a menos que pulsemos Ctrl+C para parar el programa.
+        if dia==9 or dia==10 or dia==49 or dia ==50 or dia==99 or dia==100:
+            time.sleep(0.5)
+        else:
+            time.sleep(0.1) ##Esperamos un tiempo hasta la siguiente iteración. El juego no termina a menos que pulsemos Ctrl+C para parar el programa.
 pygame.quit()

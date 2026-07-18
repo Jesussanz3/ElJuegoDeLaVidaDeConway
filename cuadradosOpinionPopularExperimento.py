@@ -29,13 +29,20 @@ dimCH = altura / columnas
 dia=0 ##Este número será el contador de las iteraciones
 #print("Iteración ", c,": ") ##Esto imprimiría en la terminar los valores de las células (0: muerta. 1: viva)
 #print(juego)
+celdasvivas=0
 for i in range (0, filas):
     for j in range (0, columnas):
         prob=random.random()
         #print("prob: ", prob)
         if prob<0.25:
             juego[i,j]=1
+            celdasvivas=celdasvivas+1
         #print("prob", prob,". uego ",juego[i,j])
+celdasmuertas=(filas*columnas)-celdasvivas
+print("Iteración ", dia,". Celdas vivas: ", celdasvivas/(filas*columnas),". Celdas muertas: ",celdasmuertas/(filas*columnas))
+entropia=0-(celdasvivas/(filas*columnas))*np.log(celdasvivas/(filas*columnas))-(celdasmuertas/(filas*columnas))*np.log(celdasmuertas/(filas*columnas))
+entropia=entropia/np.log(2)
+print("Entropía: ", entropia)
 juegocopia=juego.copy()
 screen.fill((25, 25, 25)) ##El color por defecto es gris muy oscuro ##Las células tendran un color gris muy oscuro al estar muertas
 
@@ -111,5 +118,8 @@ while corriendo:
         print("Entropía: ", entropia)
         #print(juego)
         pygame.display.flip() ##Se dibujan los cuadrados de la última iteración
-        time.sleep(0.1) ##Esperamos un tiempo hasta la siguiente iteración. El juego no termina a menos que pulsemos Ctrl+C para parar el programa.
+        if dia==9 or dia==10 or dia==49 or dia ==50 or dia==99 or dia==100:
+            time.sleep(0.5)
+        else:
+            time.sleep(0.1) ##Esperamos un tiempo hasta la siguiente iteración. El juego no termina a menos que pulsemos Ctrl+C para parar el programa.
 pygame.quit()

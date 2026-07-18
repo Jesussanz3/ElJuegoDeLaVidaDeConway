@@ -82,17 +82,26 @@ if __name__ == "__main__":
 
     # 5. Bucle principal de la aplicación
     corriendo = True
+    celdasvivasjovenes=0
+    celdasvivasmaduras=0
     for i in range (0, FILAS):
         for j in range (0, COLUMNAS):
             prob=random.random()
             #print("prob: ", prob)
-            if prob<0.25:
+            if prob<0.75:
                 prob2=random.random()
                 if prob2<0.5:
                     juego[i,j]=1
+                    celdasvivasjovenes=celdasvivasjovenes+1
                 else:
                     juego[i,j]=2
+                    celdasvivasmaduras=celdasvivasmaduras+1
             #print("juego[",i,", ",j,"]: ",juego[i,j])
+    celdasmuertas=FILAS*COLUMNAS-celdasvivasjovenes-celdasvivasmaduras
+    print("Iteración 0. Celdas vivas: ", (celdasvivasjovenes+celdasvivasmaduras)/(FILAS*COLUMNAS),". Celdas vivas jóvenes: ",celdasvivasjovenes/(FILAS*COLUMNAS),". Celdas vivas maduras: ",celdasvivasmaduras/(FILAS*COLUMNAS),". Celdas muertas: ",celdasmuertas/(FILAS*COLUMNAS))
+    entropia=0-(celdasvivasjovenes/(FILAS*COLUMNAS))*np.log(celdasvivasjovenes/(FILAS*COLUMNAS))-(celdasvivasmaduras/(FILAS*COLUMNAS))*np.log(celdasvivasmaduras/(FILAS*COLUMNAS))-(celdasmuertas/(FILAS*COLUMNAS))*np.log(celdasmuertas/(FILAS*COLUMNAS))
+    entropia=entropia/np.log(3)
+    print("Entropía: ", entropia)
     juegocopia=np.zeros((FILAS, COLUMNAS))
     for i in range(0, FILAS):
         for j in range(0, COLUMNAS):
@@ -241,7 +250,10 @@ if __name__ == "__main__":
             entropia=0-(celdasvivasjovenes/(FILAS*COLUMNAS))*np.log(celdasvivasjovenes/(FILAS*COLUMNAS))-(celdasvivasmaduras/(FILAS*COLUMNAS))*np.log(celdasvivasmaduras/(FILAS*COLUMNAS))-(celdasmuertas/(FILAS*COLUMNAS))*np.log(celdasmuertas/(FILAS*COLUMNAS))
             entropia=entropia/np.log(3)
             print("Entropía: ", entropia)            
-            time.sleep(0.1)
+            if dia==9 or dia==10 or dia==49 or dia ==50 or dia==99 or dia==100:
+                time.sleep(0.5)
+            else:
+                time.sleep(0.1) ##Esperamos un tiempo hasta la siguiente iteración. El juego no termina a menos que pulsemos Ctrl+C para parar el programa.
 
     # Salir de forma limpia
     pygame.quit()

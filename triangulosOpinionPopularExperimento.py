@@ -123,13 +123,20 @@ if __name__ == "__main__":
     tri_activo = None
     juegocopia=np.zeros((FILAS, COLUMNAS))
     dia=0 ##Este número será el contador de las iteraciones
+    celdasvivas=0
     for i in range (0, FILAS):
         for j in range (0, COLUMNAS):
             prob=random.random()
             #print("prob: ", prob)
             if prob<0.25:
                 juego[i,j]=1
+                celdasvivas=celdasvivas
             #print("prob", prob,". uego ",juego[i,j])
+    celdasmuertas=(FILAS*COLUMNAS)-celdasvivas
+    print("Iteración ", dia,". Celdas vivas: ", celdasvivas/(FILAS*COLUMNAS),". Celdas muertas: ",celdasmuertas/(FILAS*COLUMNAS))
+    entropia=0-(celdasvivas/(FILAS*COLUMNAS))*np.log(celdasvivas/(FILAS*COLUMNAS))-(celdasmuertas/(FILAS*COLUMNAS))*np.log(celdasmuertas/(FILAS*COLUMNAS))
+    entropia=entropia/np.log(2)
+    print("Entropía: ", entropia)
     for i in range(0, FILAS):
         for j in range(0, COLUMNAS):
             juegocopia[i, j]=juego[i, j]
@@ -228,8 +235,10 @@ if __name__ == "__main__":
             entropia=0-(celdasvivas/(FILAS*COLUMNAS))*np.log(celdasvivas/(FILAS*COLUMNAS))-(celdasmuertas/(FILAS*COLUMNAS))*np.log(celdasmuertas/(FILAS*COLUMNAS))
             entropia=entropia/np.log(2)
             print("Entropía: ", entropia)
-            time.sleep(0.1)
-
+            if dia==9 or dia==10 or dia==49 or dia ==50 or dia==99 or dia==100:
+                time.sleep(0.5)
+            else:
+                time.sleep(0.1) ##Esperamos un tiempo hasta la siguiente iteración. El juego no termina a menos que pulsemos Ctrl+C para parar el programa.
 
     pygame.quit()
     sys.exit()
