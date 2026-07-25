@@ -190,10 +190,57 @@ if __name__ == "__main__":
             actividad=0
             for i in range(0, FILAS):
                 for j in range(0, COLUMNAS):
+                    vecinosenfermos=0
                     if (i+j)%2==0:
-                        vecinosvivos=juego[(i+1)%FILAS, j] + juego[i, (j-1)%COLUMNAS] + juego[i, (j+1)%COLUMNAS]
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
                     else:
-                        vecinosvivos=juego[(i-1)%FILAS, j] + juego[i, (j-1)%COLUMNAS] + juego[i, (j+1)%COLUMNAS]
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
                     if juego[i,j]==0:
                         if vecinosvivos==1:
                             juegocopia[i, j]=1

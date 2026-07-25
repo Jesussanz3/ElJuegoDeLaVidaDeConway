@@ -108,9 +108,9 @@ if __name__ == "__main__":
     COLOR_RELLENO = (0, 0, 255) # Rojo para el clickeado
 
     # Parámetros geométricos
-    TAMAÑO_TRIANGULO = 40  # Distancia del centro a sus vértices
+    TAMAÑO_TRIANGULO = 35  # Distancia del centro a sus vértices
     FILAS = 7
-    COLUMNAS = 10
+    COLUMNAS = 11
     OFFSET_X = 80
     OFFSET_Y = 80
 
@@ -173,13 +173,60 @@ if __name__ == "__main__":
         if not pausa:
             for i in range(0, FILAS):
                 for j in range(0, COLUMNAS):
+                    vecinosvivos=0
                     if (i+j)%2==0:
-                        vecinosvivos=juego[(i+1)%FILAS, j] + juego[i, (j-1)%COLUMNAS] + juego[i, (j+1)%COLUMNAS]
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
                     else:
-                        vecinosvivos=juego[(i-1)%FILAS, j] + juego[i, (j-1)%COLUMNAS] + juego[i, (j+1)%COLUMNAS]
-                    if vecinosvivos>1:
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[i, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j-2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, j]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j+2)%COLUMNAS]>0:
+                            vecinosvivos=vecinosvivos+1
+                    if vecinosvivos>6:
                         juegocopia[i, j]=1
-                    if vecinosvivos<=1:
+                    if vecinosvivos<6:
                         juegocopia[i, j]=0
             # Renderizado
             pantalla.fill(COLOR_FONDO)

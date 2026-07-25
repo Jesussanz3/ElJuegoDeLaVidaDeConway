@@ -130,7 +130,7 @@ if __name__ == "__main__":
         for j in range (0, COLUMNAS):
             prob=random.random()
             #print("prob: ", prob)
-            if prob<0.75:
+            if prob<0.25:
                 prob2=random.random()
                 if prob2<0.5:
                     juego[i,j]=1
@@ -181,6 +181,7 @@ if __name__ == "__main__":
                         c=tri_activo['columna']
                         esquinas=tri_activo['esquinas']
                         esquinas_desplazadas = [(x + OFFSET_X, y + OFFSET_Y) for x, y in esquinas]
+                        print("Fila ",f,". Columna ",c)
                         if juegocopia[f, c]==0:
                             juego[f, c]=2
                             juegocopia[f, c]=2
@@ -206,24 +207,64 @@ if __name__ == "__main__":
             actividad=0
             for i in range(0, FILAS):
                 for j in range(0, COLUMNAS):
-                    vecinosvivos=0
-                    if juego[i, (j-1)%COLUMNAS]>0:
-                            vecinosvivos=vecinosvivos+1
-                    if juego[i, (j+1)%COLUMNAS]>0:
-                            vecinosvivos=vecinosvivos+1
+                    vecinosenfermos=0
                     if (i+j)%2==0:
-                        if juego[(i+1)%FILAS, j]>0:
-                                vecinosvivos=vecinosvivos+1
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, j]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j-2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, j]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j+2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
                     else:
-                        if juego[(i-1)%FILAS, j]>0:
-                                vecinosvivos=vecinosvivos+1 
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, j]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j-2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, j]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j+2)%COLUMNAS]==0:
+                            vecinosenfermos=vecinosenfermos+1
                     if juegocopia[i, j]==0:
-                        if vecinosvivos==1:
+                        if vecinosenfermos==3:
                             juegocopia[i, j]=1
                             celdasvivasjovenes=celdasvivasjovenes+1
                             actividad=actividad+1
                     else:
-                        if vecinosvivos==1 or vecinosvivos==2:
+                        if vecinosenfermos==4 or vecinosenfermos==5:
                             juegocopia[i, j]=2
                             celdasvivasmaduras=celdasvivasmaduras+1
                             if juego[i,j]==1:
@@ -231,7 +272,6 @@ if __name__ == "__main__":
                         else:
                             juegocopia[i, j]=0
                             actividad=actividad+1
-                       
                         
             # Renderizado
             pantalla.fill(COLOR_FONDO)

@@ -183,19 +183,58 @@ if __name__ == "__main__":
             for i in range(0, FILAS):
                 for j in range(0, COLUMNAS):
                     vecinosenfermos=0
-                    if juego[i, (j-1)%COLUMNAS]==1:
-                            vecinosenfermos=vecinosenfermos+1
-                    if juego[i, (j+1)%COLUMNAS]==1:
-                            vecinosenfermos=vecinosenfermos+1
-                    
                     if (i+j)%2==0:
-                        if juego[(i+1)%FILAS, j]==1:
-                                vecinosenfermos=vecinosenfermos+1
-                    else:
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
                         if juego[(i-1)%FILAS, j]==1:
-                                vecinosenfermos=vecinosenfermos+1 
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j-2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, j]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j+2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                    else:
+                        if juego[(i+1)%FILAS, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, j]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i+1)%FILAS, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[i, (j+2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j-2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j-1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, j]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j+1)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
+                        if juego[(i-1)%FILAS, (j+2)%COLUMNAS]==1:
+                            vecinosenfermos=vecinosenfermos+1
                     if juego[i,j]==0:
-                        if vecinosenfermos>=1:
+                        if vecinosenfermos>=2:
                             juegocopia[i,j]=1
                         else:
                             juegocopia[i,j]=0
@@ -210,6 +249,8 @@ if __name__ == "__main__":
                                 juegocopia[i,j]=0
                             else:
                                 juegocopia[i,j]=2
+                   
+
                     
                         
             # Renderizado
