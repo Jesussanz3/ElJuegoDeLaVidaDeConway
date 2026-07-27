@@ -1,3 +1,90 @@
-Hemos usado estos códigos para simular el juego de la vida de Conway y variantes aplicados a ejemplos de la vida real. 
-Hemos usado las librerías pygame, que es adecuada para juegos como este, y numpy, para trabajar adecuadamente con matrices. En cada código, las variables “filas” y “columnas” sirven para indicar el número de filas y columnas deseadas en la matriz. Los casos de las matrices de hexágonos y triángulos son más difíciles, ya que hay que hacer un desplazamiento para que las figuras no se salgan por arriba y la distribución de las figuras es más complicada que en la matriz de cuadrados. Las matrices son del tamaño establecido en las filas y las columnas y cada posición guardará un entero que representará el estado de esa célula y que, en cada iteración, cambiará en función de las reglas establecidas que tendrán que ver con los estados de sus vecinos (es decir, las células que comparten lado o vértice con la primera en el caso de los cuadrados y hexágonos, o lado en el caso de los triángulos). Cuando se hayan calculado todos los estados de una iteración, se imprimirán en la matriz en la que cada color representará un estado definido (los bordes de cada célula se verán siempre). 
-Cuando el programa sea ejecutado (basta con pulsar en “Run Python file”), estará pausado para que se pueda editar la configuración inicial (pulsando en una célula, esta cambiará de estado) antes de que empiecen las iteraciones. La tecla del espacio sirve para pausar y seguir con el programa. La función time.sleep sirve para establecer el tiempo entre cada iteración. Cuanto mayor sea el número de esa función, más tiempo pasará entre cada iteración.
+Simulación del Juego de la Vida y sus variantes
+
+ 
+
+Este repositorio contiene distintos programas desarrollados en Python para simular el Juego de la Vida de Conway y varias extensiones aplicadas a ejemplos inspirados en procesos reales.
+
+Las simulaciones permiten trabajar con tres tipos de teselaciones:
+
+Cuadrangular.
+Hexagonal.
+Triangular.
+ 
+
+Dependencias
+
+ 
+
+Los programas utilizan las siguientes bibliotecas:
+
+Pygame, para representar gráficamente la matriz, gestionar la interacción con el usuario y ejecutar la simulación.
+NumPy, para almacenar y manipular eficientemente los estados de las células mediante matrices.
+Las dependencias pueden instalarse con:
+
+pip install pygame numpy
+
+ 
+
+Configuración de la matriz
+
+ 
+
+En cada programa, las variables filas y columnas permiten establecer las dimensiones de la matriz utilizada en la simulación.
+
+Cada posición de la matriz almacena un número entero que representa el estado de una célula. El significado de cada estado y su color asociado depende del ejemplo ejecutado.
+
+En cada iteración, el estado de una célula se actualiza de acuerdo con las reglas definidas y con los estados de sus células vecinas.
+
+La definición de vecindad depende de la teselación:
+
+En todas las matrices, se consideran vecinas las células que comparten un lado o un vértice.
+Una vez calculados todos los nuevos estados, la representación gráfica de la matriz se actualiza. Cada color corresponde a un estado determinado y los bordes de las células permanecen visibles durante toda la simulación.
+
+ 
+
+Teselaciones hexagonales y triangulares
+
+ 
+
+La representación de matrices hexagonales y triangulares requiere cálculos geométricos adicionales respecto a la matriz cuadrangular.
+
+En particular, es necesario desplazar algunas filas o figuras para conseguir que las células encajen correctamente y evitar que parte de la teselación quede fuera de la ventana. Además, la posición y orientación de las células deben calcularse de forma específica para cada tipo de teselación.
+
+ 
+
+Ejecución
+
+ 
+
+Para ejecutar una simulación, puede utilizarse el botón Run Python File del editor o el siguiente comando:
+
+python nombre_del_archivo.py
+
+Al iniciar el programa, la simulación permanece pausada para permitir la edición de la configuración inicial.
+
+Los controles disponibles son:
+
+Clic sobre una célula: cambia su estado.
+Barra espaciadora: inicia, pausa o reanuda la simulación.
+ 
+
+Velocidad de la simulación
+
+ 
+
+El tiempo transcurrido entre dos iteraciones consecutivas se controla mediante la función:
+
+time.sleep(valor)
+
+Un valor mayor produce una simulación más lenta, mientras que un valor menor reduce el tiempo de espera entre iteraciones.
+
+Por ejemplo:
+
+time.sleep(0.5)
+
+introduce una pausa de medio segundo entre cada actualización de la matriz.
+Por ejemplo:
+
+time.sleep(0.5)
+
+introduce una pausa de medio segundo entre cada actualización de la matriz.
